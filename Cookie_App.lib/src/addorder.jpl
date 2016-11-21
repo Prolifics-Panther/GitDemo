@@ -1,0 +1,58 @@
+
+//receive bundle "check" keep  data auto
+
+receive bundle "getname" data fullnameadd
+proc submit1
+{
+call parsefullname1
+
+vars match
+dbms alias match
+dbms sql insert into scoutorders (scoutid,orderdt,numpackages,numboxes,orderamt,paid,paidamt)values(:+addid,:+orderdt,0,:+numboxes,:+numboxes*4,0,0)
+dbms alias
+
+if(match==1)
+{
+addmsg = "Sorry! Try again"
+}
+else
+{
+ addmsg = "Added Successfully"
+
+}
+}
+
+proc parsefullname1
+{
+global addid
+call sm_web_save_global("addid")
+
+dbms alias scoutid addid
+dbms sql select scoutid from scout where scout.scoutfirstname+' '+scout.scoutlastname=:+fullnameadd
+dbms alias
+//send bundle "addbundle" data fullnameadd
+}
+
+proc gotonext
+{
+addmsg = "";
+
+
+vars vscrname
+receive bundle "viewscr"  data vscrname
+
+if(vscrname=="vieworder")
+{
+call parsefullname1
+vars scr_add = "addorder"
+send bundle "addtoview" data fullnameadd,scr_add,addid
+vscrname = ""
+fullnameadd = ""
+call sm_r_form("vieworder")
+}
+else
+{
+call sm_r_form("optionscreen")
+
+}
+}

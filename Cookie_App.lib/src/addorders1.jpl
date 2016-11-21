@@ -1,0 +1,38 @@
+ proc submit1
+{
+
+
+
+vars btnPush
+       btnPush = sm_message_box("Do you want to Add Order ?",\
+             "", SM_MB_YESNOCANCEL | SM_MB_ICONQUESTION,"")
+
+
+ if (btnPush == SM_IDCANCEL)
+      {
+
+call jm_exit
+
+      }
+       if (btnPush == SM_IDYES)
+      {
+dbms sql insert into scoutorders (scoutid,orderdt,numpackages,numboxes,orderamt,paid)values(:+id,:+orderdt,0,:+numboxes,:+numboxes*4,0)
+//call sm_jform("vieworder")
+call jm_exit
+       }
+       if (btnPush == SM_IDNO)
+     {
+        msg emsg "cancelled"
+numboxes=""
+     }
+
+}
+
+
+
+
+proc getname
+{
+output = :+fname
+msg emsg fname
+}
